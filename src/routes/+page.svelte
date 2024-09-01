@@ -3,19 +3,41 @@
 
 	let timelineItems = [
 		{
-			date: '2022',
-			title: 'Started my Linux journey',
-			description: '...Details about the experience...'
+			date: '2017',
+			title: 'Starting Python',
+			description:
+				'I wanted to learn Python for fun (also to automate some completion based math homework.) Jose Portilla on Udemy set me up!'
 		},
 		{
-			date: '2023',
-			title: 'Built my first home server',
-			description: '...Details about the project...'
+			date: '2019 - 2022',
+			title: 'Computer Science Degree',
+			description:
+				'Attended University of Virginia and graduated with a B.S. in Computer Science. (Wish I took more math and physics courses)'
 		},
 		{
-			date: '2024',
-			title: 'Started new projects in SvelteKit',
-			description: '...Details about this project...'
+			date: 'Feb 2023 - Dec 2023',
+			title: 'Junior Software Engineer at Capital One',
+			description:
+				"Worked on internal tooling for Capital One's cloud deployment pipeline. Got certified in AWS. Learned that banks move very slowly "
+		},
+		{
+			date: 'Jan 2024 - Feb 2024',
+			title: 'Flamethrower Startup',
+			description:
+				'Learned the basics of CAD, 3D modeling, circuit design, and microcontroller code. Blew up in my face though... and decided maybe not a good first company'
+		},
+
+		{
+			date: 'March 2024 - April 2024',
+			title: 'Chess Opening Trainer',
+			description:
+				'Built custom database in postgres - it was $500/month to host because of the data. Took lichess opening database in rust, fit it to chess.com games = 25x compression. Throw in some docker containers and it is AWS free tier now'
+		},
+		{
+			date: 'May 2024 - Present',
+			title: 'Solo Founder - myegift.org',
+			description:
+				'First real business project. Built a website to sell personalized egift cards. Never did frontend, stripe, email clients, set up an llc, or ran google ads before this'
 		}
 	];
 
@@ -27,9 +49,14 @@
 <section class="hero">
 	<h1>Digital Diary</h1>
 	<p>
-		This is a backlog of projects, thoughts, and ideas for Eric in 2050 to get a snapshot into what
-		I was doing and what I felt proud of when I was younger.
+		This site is a backlog of projects, thoughts, and ideas for me in 2050 to get a snapshot into
+		what I was doing and what I felt proud of when I was younger.
 	</p>
+</section>
+
+<!-- Professional Career Section Header -->
+<section class="career-header">
+	<h2>Professional Career</h2>
 </section>
 
 <div class="timeline">
@@ -44,6 +71,26 @@
 </div>
 
 <style>
+	.career-header {
+		text-align: center;
+		margin: 2rem 0; /* Add some margin to separate from other sections */
+		font-size: 1.8rem; /* Increase font size for subheading */
+		font-weight: bold; /* Make the subheading bold */
+		color: #333; /* Set a distinct color for the subheading */
+		letter-spacing: 1px; /* Add some spacing between letters */
+		position: relative; /* Position for the underline effect */
+	}
+
+	.career-header::after {
+		content: '';
+		display: block;
+		width: 100px; /* Width of the underline */
+		height: 3px; /* Height of the underline */
+		background-color: #ff6600; /* A contrasting color for the underline */
+		margin: 0.5rem auto 0; /* Center the underline and add some space above */
+		border-radius: 5px; /* Rounded corners for the underline */
+	}
+
 	.hero {
 		text-align: center;
 		margin-bottom: 3rem;
@@ -101,6 +148,11 @@
 
 	.timeline-item:hover .content {
 		transform: scale(1.05);
+	}
+	.timeline-item:hover .content {
+		transform: scale(1.05);
+		background-color: #ffffff; /* Light orange background on hover */
+		border-color: #ff6600; /* Orange border on hover */
 	}
 
 	.timeline-item h3 {

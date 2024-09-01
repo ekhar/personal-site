@@ -69,7 +69,7 @@
 	}
 
 	.container {
-		max-width: 1200px;
+		max-width: 800px; /* Maximum width for content to improve readability */
 		margin: 0 auto;
 		padding: 2rem;
 	}
@@ -79,5 +79,19 @@
 		border: none;
 		cursor: pointer;
 		font-size: 1.5rem;
+	}
+
+	/* Responsive design for smaller screens */
+	@media (max-width: 600px) {
+		.header {
+			flex-direction: column;
+			align-items: flex-start;
+		}
+
+		.nav-links {
+			justify-content: center;
+			width: 100%;
+			margin-top: 0.5rem;
+		}
 	}
 </style>
