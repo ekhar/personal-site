@@ -1,53 +1,83 @@
 <script>
-	import Header from './Header.svelte';
+	import { darkMode } from '$lib/stores';
+	import { onMount } from 'svelte';
 	import '../app.css';
+
+	onMount(() => {
+		const storedTheme = localStorage.getItem('theme');
+		if (storedTheme) {
+			$darkMode = storedTheme === 'dark';
+		} else {
+			$darkMode = window.matchMedia('(prefers-color-scheme: dark)').matches;
+		}
+	});
+
+	$: {
+		if (typeof document !== 'undefined') {
+			document.body.classList.toggle('dark-mode', $darkMode);
+			localStorage.setItem('theme', $darkMode ? 'dark' : 'light');
+		}
+	}
+
+	function toggleDarkMode() {
+		$darkMode = !$darkMode;
+	}
 </script>
 
-<div class="app">
-	<Header />
-
-	<main>
-		<slot />
-	</main>
-
-	<footer>
-		<p>visit <a href="https://kit.svelte.dev">kit.svelte.dev</a> to learn SvelteKit</p>
-	</footer>
+<div class="header">
+	<h1><a href="/">Eric's Website</a></h1>
+	<nav class="nav-links">
+		<a href="/blog">Blog</a>
+		<a href="/linux-config">Linux Config</a>
+		<a href="/home-server">Home Server Specs</a>
+		<a href="/projects">Projects</a>
+		<button on:click={toggleDarkMode}>
+			{$darkMode ? '☀️' : '🌙'}
+		</button>
+	</nav>
 </div>
 
+<main class="container">
+	<slot />
+</main>
+
 <style>
-	.app {
+	.header {
 		display: flex;
-		flex-direction: column;
-		min-height: 100vh;
-	}
-
-	main {
-		flex: 1;
-		display: flex;
-		flex-direction: column;
-		padding: 1rem;
-		width: 100%;
-		max-width: 64rem;
-		margin: 0 auto;
-		box-sizing: border-box;
-	}
-
-	footer {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
+		justify-content: space-between;
 		align-items: center;
-		padding: 12px;
+		padding: 1rem 2rem;
+		background-color: var(--bg-header);
+		color: var(--header-text-color);
+		max-width: 1200px; /* Maximum width to control on wide screens */
+		margin: 1rem auto; /* Center the header and add margin around it */
+		border-radius: 12px; /* Rounded corners */
+		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Add a subtle shadow */
 	}
 
-	footer a {
+	.nav-links {
+		display: flex;
+		gap: 1rem;
+		align-items: center;
+	}
+
+	.nav-links a,
+	.header h1 a {
+		text-decoration: none;
+		color: var(--header-text-color);
 		font-weight: bold;
 	}
 
-	@media (min-width: 480px) {
-		footer {
-			padding: 12px 0;
-		}
+	.container {
+		max-width: 1200px;
+		margin: 0 auto;
+		padding: 2rem;
+	}
+
+	button {
+		background: none;
+		border: none;
+		cursor: pointer;
+		font-size: 1.5rem;
 	}
 </style>
