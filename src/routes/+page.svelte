@@ -73,16 +73,18 @@
 </div>
 
 <!-- Posts -->
-<section>
-	<ul class="posts">
+<section class="blog-posts">
+	<h2>Recent Blog Posts</h2>
+	<div class="posts-grid">
 		{#each data.posts as post}
-			<li class="post">
-				<a href={post.slug} class="title">{post.title}</a>
+			<div class="post-card">
+				<h3><a href="/blog/{post.slug}">{post.title}</a></h3>
 				<p class="date">{formatDate(post.date)}</p>
 				<p class="description">{post.description}</p>
-			</li>
+				<a href="/blog/{post.slug}" class="read-more">Read More</a>
+			</div>
 		{/each}
-	</ul>
+	</div>
 </section>
 
 <style>
@@ -177,8 +179,78 @@
 	.timeline-item p {
 		color: #666;
 	}
-	.posts {
+	.blog-posts {
+		margin-top: 4rem;
+		padding: 2rem;
+		background-color: #f9f9f9;
+		border-radius: 8px;
+	}
+
+	.blog-posts h2 {
+		text-align: center;
+		margin-bottom: 2rem;
+		color: #333;
+		font-size: 2rem;
+	}
+
+	.posts-grid {
 		display: grid;
+		grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
 		gap: 2rem;
+	}
+
+	.post-card {
+		background-color: #ffffff;
+		border: 1px solid #e0e0e0;
+		border-radius: 8px;
+		padding: 1.5rem;
+		transition:
+			transform 0.3s ease,
+			box-shadow 0.3s ease;
+	}
+
+	.post-card:hover {
+		transform: translateY(-5px);
+		box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+	}
+
+	.post-card h3 {
+		margin: 0 0 0.5rem 0;
+		font-size: 1.4rem;
+	}
+
+	.post-card h3 a {
+		color: #333;
+		text-decoration: none;
+	}
+
+	.post-card h3 a:hover {
+		color: #ff6600;
+	}
+
+	.post-card .date {
+		font-size: 0.9rem;
+		color: #666;
+		margin-bottom: 0.5rem;
+	}
+
+	.post-card .description {
+		font-size: 1rem;
+		color: #444;
+		margin-bottom: 1rem;
+	}
+
+	.post-card .read-more {
+		display: inline-block;
+		padding: 0.5rem 1rem;
+		background-color: #ff6600;
+		color: white;
+		text-decoration: none;
+		border-radius: 4px;
+		transition: background-color 0.3s ease;
+	}
+
+	.post-card .read-more:hover {
+		background-color: #e55c00;
 	}
 </style>
