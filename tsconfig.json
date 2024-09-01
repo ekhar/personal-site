@@ -8,6 +8,14 @@
     "resolveJsonModule": true,
     "skipLibCheck": true,
     "sourceMap": true,
+    "paths": {
+      "$lib": [
+        "src/lib"
+      ],
+      "$lib/*": [
+        "src/lib/*"
+      ]
+    },
     "strict": true,
     "moduleResolution": "bundler",
     "plugins": [

@@ -1,5 +1,7 @@
-<script>
+<script lang="ts">
 	import { onMount } from 'svelte';
+	import { formatDate } from '$lib/utils';
+	export let data;
 
 	let timelineItems = [
 		{
@@ -37,7 +39,7 @@
 			date: 'May 2024 - Present',
 			title: 'Solo Founder - myegift.org',
 			description:
-				'First real business project. Built a website to sell personalized egift cards. Never did frontend, stripe, email clients, set up an llc, or ran google ads before this'
+				'First real business project. Built a website to sell personalized egift cards. Never did frontend, set up an llc, or ran google ads before this'
 		}
 	];
 
@@ -69,6 +71,19 @@
 		</div>
 	{/each}
 </div>
+
+<!-- Posts -->
+<section>
+	<ul class="posts">
+		{#each data.posts as post}
+			<li class="post">
+				<a href={post.slug} class="title">{post.title}</a>
+				<p class="date">{formatDate(post.date)}</p>
+				<p class="description">{post.description}</p>
+			</li>
+		{/each}
+	</ul>
+</section>
 
 <style>
 	.career-header {
@@ -161,5 +176,9 @@
 
 	.timeline-item p {
 		color: #666;
+	}
+	.posts {
+		display: grid;
+		gap: 2rem;
 	}
 </style>
