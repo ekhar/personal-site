@@ -5,15 +5,19 @@
 	let canvas: HTMLCanvasElement;
 	let wasmModule: any;
 	let ctx: CanvasRenderingContext2D;
+	let isFocused = false;
 
 	onMount(async () => {
 		try {
 			wasmModule = await initWasm();
-			console.log('WebAssembly module loaded successfully');
-			ctx = canvas.getContext('2d');
-			canvas.width = 480;
-			canvas.height = 480;
-			updateCanvas();
+			ctx = canvas.getContext('2d')!;
+			canvas.width = 24 * 20; // mapWidth * cellSize
+			canvas.height = 24 * 20; // mapHeight * cellSize
+			if (typeof wasmModule.draw2d_map === 'function') {
+				updateCanvas();
+			} else {
+				console.error('draw2d_map is not a function');
+			}
 			window.addEventListener('keydown', handleKeyDown);
 			return () => {
 				window.removeEventListener('keydown', handleKeyDown);
@@ -24,45 +28,76 @@
 	});
 
 	function updateCanvas() {
-		wasmModule.draw2d_map(ctx);
-		wasmModule.dda_single(ctx);
+		if (ctx && wasmModule && typeof wasmModule.draw2d_map === 'function') {
+			wasmModule.draw2d_map(ctx);
+		} else {
+			console.error('Unable to call draw2d_map');
+		}
 	}
 
 	function handleKeyDown(event: KeyboardEvent) {
-		let moveX = 0;
+		if (!isFocused) return;
+
 		let moveY = 0;
-		switch (event.key) {
-			case 'ArrowUp':
-				moveY = -1;
-				break;
-			case 'ArrowDown':
+		let rotate = 0;
+
+		switch (event.key.toLowerCase()) {
+			case 'w':
 				moveY = 1;
 				break;
-			case 'ArrowLeft':
-				moveX = -1;
+			case 's':
+				moveY = -1;
 				break;
-			case 'ArrowRight':
-				moveX = 1;
+			case 'a':
+				rotate = -1;
+				break;
+			case 'd':
+				rotate = 1;
 				break;
 		}
+
 		if (wasmModule && wasmModule.move_player) {
-			wasmModule.move_player(moveX, moveY);
+			wasmModule.move_player(moveY, rotate);
+			console.log(moveY, rotate);
 			updateCanvas();
 		}
 	}
+
+	function handleFocus() {
+		isFocused = true;
+	}
+
+	function handleBlur() {
+		isFocused = false;
+	}
 </script>
 
-<div class="canvas-container">
+<div class="canvas-container" on:click={handleFocus} on:blur={handleBlur} tabindex="0">
 	<canvas bind:this={canvas}></canvas>
-	<p>2D Map with Single Raycast</p>
+	<p>2D Map with Player Movement</p>
+	{#if !isFocused}
+		<div class="focus-prompt">Click to enable controls</div>
+	{/if}
 </div>
 
 <style>
 	.canvas-container {
 		text-align: center;
 		margin-top: 20px;
+		position: relative;
+		outline: none;
 	}
 	canvas {
 		border: 1px solid #ccc;
+	}
+	.focus-prompt {
+		position: absolute;
+		top: 50%;
+		left: 50%;
+		transform: translate(-50%, -50%);
+		background-color: rgba(0, 0, 0, 0.7);
+		color: white;
+		padding: 10px;
+		border-radius: 5px;
 	}
 </style>

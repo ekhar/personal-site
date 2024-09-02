@@ -40,9 +40,11 @@ var worldMap = [mapWidth][mapHeight]int{
 }
 
 var (
-	posX, posY     float64 = 22, 12
-	dirX, dirY     float64 = -1, 0
-	planeX, planeY float64 = 0, 0.66
+	posX, posY       float64 = 22, 12
+	dirX, dirY       float64 = -1, 0
+	planeX, planeY   float64 = 0, 0.66
+	time, oldTime    float64 = 0, 0
+	cameraX, cameraY float64 = 0, 0
 )
 
 func main() {
@@ -108,6 +110,7 @@ func draw2d_map(this js.Value, args []js.Value) interface{} {
 }
 
 func move_player(this js.Value, args []js.Value) interface{} {
+
 	moveY := args[0].Float()
 	rotate := args[1].Float()
 
@@ -146,8 +149,21 @@ func move_player(this js.Value, args []js.Value) interface{} {
 }
 
 func dda_single(this js.Value, args []js.Value) interface{} {
-	// TODO: Implement single raycast using DDA algorithm
-	return nil
+	mapX := int(posX)
+	mapY := int(posY)
+	var sideDistY float64 = 0.0
+	var sideDistX float64 = 0.0
+
+	deltaDistX := math.Abs(1 / dirX)
+	deltaDistY := math.Abs(1 / dirY)
+	var perpWallDistX float64 = 0.0
+
+	var int stepX
+	var int stepY
+
+	var hit = 0
+	var int side
+
 }
 
 func dda_fov(this js.Value, args []js.Value) interface{} {
