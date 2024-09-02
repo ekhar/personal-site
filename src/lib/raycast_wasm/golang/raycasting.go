@@ -67,12 +67,81 @@ func main() {
 }
 
 func draw2d_map(this js.Value, args []js.Value) interface{} {
-	// TODO: Implement 2D map rendering
+	ctx := args[0]
+	cellSize := 20 // Size of each cell in pixels
+
+	// Clear the canvas
+	ctx.Call("clearRect", 0, 0, mapWidth*cellSize, mapHeight*cellSize)
+
+	// Draw the map
+	for y := 0; y < mapHeight; y++ {
+		for x := 0; x < mapWidth; x++ {
+			cellType := worldMap[y][x]
+			switch cellType {
+			case 1:
+				ctx.Set("fillStyle", "black")
+			case 2:
+				ctx.Set("fillStyle", "blue")
+			case 3:
+				ctx.Set("fillStyle", "green")
+			case 4:
+				ctx.Set("fillStyle", "yellow")
+			case 5:
+				ctx.Set("fillStyle", "purple")
+			default:
+				ctx.Set("fillStyle", "white")
+			}
+			ctx.Call("fillRect", x*cellSize, y*cellSize, cellSize, cellSize)
+		}
+	}
+
+	// Draw the player
+	ctx.Set("fillStyle", "red")
+	playerX := int(posX * float64(cellSize))
+	playerY := int(posY * float64(cellSize))
+	playerSize := 6
+	ctx.Call("beginPath")
+	ctx.Call("arc", playerX, playerY, playerSize, 0, 2*math.Pi)
+	ctx.Call("fill")
+
 	return nil
 }
 
 func move_player(this js.Value, args []js.Value) interface{} {
-	// TODO: Implement player movement
+	moveY := args[0].Float()
+	rotate := args[1].Float()
+
+	// Movement speed and rotation speed
+	moveSpeed := 0.10
+	rotSpeed := 0.10
+
+	// Move forward/backward
+	if moveY != 0 {
+		newX := posX + dirX*moveY*moveSpeed
+		newY := posY + dirY*moveY*moveSpeed
+
+		// Check for collision
+		if worldMap[int(newY)][int(posX)] == 0 {
+			posY = newY
+		}
+		if worldMap[int(posY)][int(newX)] == 0 {
+			posX = newX
+		}
+	}
+
+	// Rotate left/right
+	if rotate != 0 {
+		// Rotate direction vector
+		oldDirX := dirX
+		dirX = dirX*math.Cos(rotate*rotSpeed) - dirY*math.Sin(rotate*rotSpeed)
+		dirY = oldDirX*math.Sin(rotate*rotSpeed) + dirY*math.Cos(rotate*rotSpeed)
+
+		// Rotate camera plane
+		oldPlaneX := planeX
+		planeX = planeX*math.Cos(rotate*rotSpeed) - planeY*math.Sin(rotate*rotSpeed)
+		planeY = oldPlaneX*math.Sin(rotate*rotSpeed) + planeY*math.Cos(rotate*rotSpeed)
+	}
+
 	return nil
 }
 
