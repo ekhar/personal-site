@@ -1,2 +1,2 @@
 run:
-	GOOS=js GOARCH=wasm go build -o raycasting.wasm raycasting.go
+	GOOS=js GOARCH=wasm go build -o ../../../static/wasm/raycasting.wasm raycasting.go

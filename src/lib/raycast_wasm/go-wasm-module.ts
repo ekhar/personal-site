@@ -7,7 +7,7 @@ export async function initWasm() {
 
 	const go = new (window as any).Go();
 	try {
-		const response = await fetch('/lib/raycast_wasm/golang/raycasting.wasm');
+		const response = await fetch('/wasm/raycasting.wasm');
 		if (!response.ok) {
 			throw new Error(`Failed to fetch WebAssembly module: ${response.statusText}`);
 		}
