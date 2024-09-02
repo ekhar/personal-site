@@ -9,84 +9,33 @@
 </script>
 
 <script lang="ts">
-	import { onMount } from 'svelte';
-	import { initWasm } from '$lib/raycast_wasm/go-wasm-module';
-
-	let canvas: HTMLCanvasElement;
-	let wasmModule: any;
-	let ctx: CanvasRenderingContext2D;
-
-	onMount(async () => {
-		try {
-			wasmModule = await initWasm();
-			console.log('WebAssembly module loaded successfully');
-
-			ctx = canvas.getContext('2d');
-			canvas.width = 480;
-			canvas.height = 480;
-
-			updateCanvas();
-			window.addEventListener('keydown', handleKeyDown);
-
-			return () => {
-				window.removeEventListener('keydown', handleKeyDown);
-			};
-		} catch (error) {
-			console.error('Failed to load WebAssembly module:', error);
-		}
-	});
-
-	function updateCanvas() {
-		if (wasmModule && wasmModule.updateRaycasting) {
-			const imageData = wasmModule.updateRaycasting(canvas.width, canvas.height);
-			const uint8Array = new Uint8ClampedArray(imageData);
-			const imageDataObj = new ImageData(uint8Array, canvas.width, canvas.height);
-			ctx.putImageData(imageDataObj, 0, 0);
-		}
-	}
-
-	function handleKeyDown(event: KeyboardEvent) {
-		let moveX = 0;
-		let moveY = 0;
-
-		switch (event.key) {
-			case 'ArrowUp':
-				moveY = -1;
-				break;
-			case 'ArrowDown':
-				moveY = 1;
-				break;
-			case 'ArrowLeft':
-				moveX = -1;
-				break;
-			case 'ArrowRight':
-				moveX = 1;
-				break;
-		}
-
-		if (wasmModule && wasmModule.movePlayer) {
-			wasmModule.movePlayer(moveX, moveY);
-			updateCanvas();
-		}
-	}
+	import Step1 from './raycasting-tutorial/TwoDMap.svelte';
+	import Step2 from './raycasting-tutorial/DDA.svelte';
+	import Step3 from './raycasting-tutorial/SingleRaycast.svelte';
+	import Step4 from './raycasting-tutorial/FullFOV.svelte';
 </script>
 
-<h2>Welcome to the 2D Map Explorer</h2>
-<p>
-	Use the arrow keys to move the character around the map. The WebAssembly module handles the game
-	logic and rendering.
-</p>
-<div class="canvas-container">
-	<canvas bind:this={canvas}></canvas>
-	<p>2D Map View</p>
-</div>
+<h1>WebAssembly Raycasting Learning</h1>
 
-<style>
-	.canvas-container {
-		text-align: center;
-		margin-top: 20px;
-	}
-	canvas {
-		border: 1px solid #ccc;
-	}
-</style>
+<section>
+	<h2>Step 1: Draw a simple 2D map</h2>
+	<p>In this step, we create a basic 2D representation of our game world.</p>
+	<Step1 />
+</section>
+
+<section>
+	<h2>Step 2: Implement DDA</h2>
+	<Step2 />
+</section>
+
+<section>
+	<h2>Step 3: Render the single raycast</h2>
+	<p>We implement a single raycast to demonstrate how the raycasting algorithm works.</p>
+	<Step3 />
+</section>
+
+<section>
+	<h2>Step 4: Implement and render full FOV raycasting</h2>
+	<p>Extending the single raycast, we now implement a full field of view.</p>
+	<Step4 />
+</section>

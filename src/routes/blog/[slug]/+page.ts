@@ -2,9 +2,9 @@ import { error } from '@sveltejs/kit';
 
 export async function load({ params }) {
 	try {
-		if (params.slug === 'raycasting-tutorial') {
+		if (params.slug === 'raycasting-post') {
 			// Load the interactive raycasting component
-			const post = await import('../../../posts/raycasting-tutorial/blog.svelte');
+			const post = await import('../../../posts/raycasting-post.svelte');
 			return {
 				content: post.default,
 				meta: post.metadata,

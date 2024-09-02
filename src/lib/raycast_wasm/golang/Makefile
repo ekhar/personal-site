@@ -1,7 +1,7 @@
-run: single multiple movable
+run: player_map
 
-single:
-	GOOS=js GOARCH=wasm go build -o ../../../static/wasm/single-raycast.wasm single_raycast.go
+player_map:
+	GOOS=js GOARCH=wasm go build -o ../../../static/wasm/player-map.wasm player_map.go
 
 multiple:
 	GOOS=js GOARCH=wasm go build -o ../../../static/wasm/multiple-raycasts.wasm multiple_raycasts.go
