@@ -1,6 +1,6 @@
 <script lang="ts" context="module">
 	export const metadata = {
-		title: 'WebAssembly Raycasting Demo',
+		title: 'WebAssembly Raycasting Learning',
 		description: 'A simple raycasting demo using Go WebAssembly and Svelte.',
 		date: '2024-09-01',
 		categories: ['graphics', 'webassembly', 'go'],

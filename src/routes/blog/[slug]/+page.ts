@@ -4,7 +4,7 @@ export async function load({ params }) {
 	try {
 		if (params.slug === 'raycasting-tutorial') {
 			// Load the interactive raycasting component
-			const post = await import('../../../posts/raycasting-tutorial.svelte');
+			const post = await import('../../../posts/raycasting-tutorial/blog.svelte');
 			return {
 				content: post.default,
 				meta: post.metadata,

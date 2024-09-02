@@ -3,7 +3,9 @@ import type { Post } from '$lib/types';
 
 async function getPosts() {
 	let posts: Post[] = [];
-	const paths = import.meta.glob(['/src/posts/*.md', '/src/posts/*.svelte'], { eager: true });
+	const paths = import.meta.glob(['/src/posts/*.md', '/src/posts/*.svelte'], {
+		eager: true
+	});
 	for (const path in paths) {
 		const file = paths[path];
 		const slug = path.split('/').at(-1)?.replace('.md', '').replace('.svelte', '');
