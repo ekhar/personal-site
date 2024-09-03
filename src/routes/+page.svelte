@@ -49,7 +49,7 @@
 	];
 	let expandedItems = new Array(timelineItems.length).fill(false);
 
-	function toggleItem(index) {
+	function toggleItem(index: number) {
 		expandedItems[index] = !expandedItems[index];
 		expandedItems = expandedItems;
 	}
@@ -65,7 +65,7 @@
 		This site is a backlog of projects, thoughts, and ideas for me in 2050 to get a snapshot into
 		what I was doing and what I felt proud of when I was younger.
 	</p>
-	<img src="/flamethrower.webp" alt="Eric's Profile Picture" width="130" height="200" />
+	<img src="/flamethrower.webp" alt="Flamethrower pic" width="130" height="200" />
 	<p>
 		So far the coolest thing I've done was try to start a flamethrower company and accidentally
 		cause a fire in my bathroom sink because of 3D printing errors.
