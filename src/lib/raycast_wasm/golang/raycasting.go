@@ -153,13 +153,19 @@ func dda_single(this js.Value, args []js.Value) interface{} {
 	cellSize := float64(20) // Size of each cell in pixels
 
 	// Get the ray's end point using the internal DDA function
-	_, mapX, mapY := dda_single_internal()
+	distance, _, _ := dda_single_internal()
 
 	// Calculate start and end points for the line
 	startX := posX * cellSize
 	startY := posY * cellSize
-	endX := float64(mapX) * cellSize
-	endY := float64(mapY) * cellSize
+
+	// Calculate the exact hit point
+	endX := posX + dirX*distance
+	endY := posY + dirY*distance
+
+	// Convert to pixel coordinates
+	endX *= cellSize
+	endY *= cellSize
 
 	// Draw the black line
 	ctx.Call("beginPath")
