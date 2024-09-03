@@ -2,7 +2,7 @@
 	import { darkMode } from '$lib/stores';
 	import { onMount } from 'svelte';
 	import '../app.css';
-
+	import PageTransition from './transition.svelte';
 	onMount(() => {
 		const storedTheme = localStorage.getItem('theme');
 		if (storedTheme) {
@@ -22,6 +22,8 @@
 	function toggleDarkMode() {
 		$darkMode = !$darkMode;
 	}
+
+	export let data;
 </script>
 
 <div class="header">
@@ -38,7 +40,9 @@
 </div>
 
 <main class="container">
-	<slot />
+	<PageTransition url={data.url}>
+		<slot />
+	</PageTransition>
 </main>
 
 <style>
