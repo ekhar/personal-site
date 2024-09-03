@@ -8,42 +8,42 @@
 			date: '2017',
 			title: 'Starting Python',
 			description:
-				'I wanted to learn Python for fun (also to automate some completion based math homework.) Jose Portilla on Udemy set me up!',
+				'I wanted to learn Python for fun (also to automate some completion-based math homework.) Jose Portilla on Udemy set me up!',
 			expanded: false
 		},
 		{
 			date: '2019 - 2022',
 			title: 'Computer Science Degree',
 			description:
-				'Attended University of Virginia and graduated with a B.S. in Computer Science. (Wish I took more math and physics courses)',
+				'Attended the University of Virginia and graduated with a B.S. in Computer Science. (Wish I had taken more math and physics courses)',
 			expanded: false
 		},
 		{
 			date: 'Feb 2023 - Dec 2023',
 			title: 'Junior Software Engineer at Capital One',
 			description:
-				"Worked on internal tooling for Capital One's cloud deployment pipeline. Got certified in AWS. Learned that banks move very slowly ",
+				"Worked on internal tooling for Capital One's cloud deployment pipeline. Got certified in AWS. Learned that banks move very slowly.",
 			expanded: false
 		},
 		{
 			date: 'Jan 2024 - Feb 2024',
 			title: 'Flamethrower Startup',
 			description:
-				'Learned the basics of CAD, 3D modeling, circuit design, and microcontroller code. Blew up in my face though... and decided maybe not a good first company',
+				'Learned the basics of CAD, 3D modeling, circuit design, and microcontroller code. Blew up in my face though... and decided maybe not a good first company.',
 			expanded: false
 		},
 		{
-			date: 'March 2024 - April 2024',
+			date: 'March 2024 - Present',
 			title: 'Chess Opening Trainer',
 			description:
-				'Built custom database in postgres - it was $500/month to host because of the data. Took lichess opening database in rust, fit it to chess.com games = 25x compression. Throw in some docker containers and it is AWS free tier now',
+				'Built a custom database in PostgreSQL - it was $500/month to host because of the data. Took the lichess opening database in Rust, fit it to chess.com games = 26x compression. Threw in some Docker containers and it is AWS free tier now.',
 			expanded: false
 		},
 		{
 			date: 'May 2024 - Present',
 			title: 'Solo Founder - myegift.org',
 			description:
-				'First real business project. Built a website to sell personalized egift cards. Never did frontend, set up an llc, or ran google ads before this',
+				'First real business project. Built a website to sell personalized eGift cards. Never did frontend, set up an LLC, or ran Google Ads before this.',
 			expanded: false
 		}
 	];
@@ -64,6 +64,20 @@
 	<p>
 		This site is a backlog of projects, thoughts, and ideas for me in 2050 to get a snapshot into
 		what I was doing and what I felt proud of when I was younger.
+	</p>
+	<img src="/flamethrower.webp" alt="Eric's Profile Picture" width="130" height="200" />
+	<p>
+		So far the coolest thing I've done was try to start a flamethrower company and accidentally
+		cause a fire in my bathroom sink because of 3D printing errors.
+	</p>
+
+	<p>
+		<small
+			><em
+				>(Making internal tools for internal tools to "Change Banking for Good" at Capital One was a
+				close second).</em
+			></small
+		>
 	</p>
 </section>
 
@@ -159,7 +173,7 @@
 	.timeline-item.left {
 		left: -26%;
 		justify-content: flex-end;
-		text-align: right;
+		text-align: left;
 	}
 
 	.timeline-item.right {
@@ -287,22 +301,17 @@
 	}
 
 	.post-card .description {
-		font-size: 1rem;
-		color: #444;
 		margin-bottom: 1rem;
+		color: #555;
 	}
 
 	.post-card .read-more {
-		display: inline-block;
-		padding: 0.5rem 1rem;
-		background-color: #ff6600;
-		color: white;
+		color: #ff6600;
 		text-decoration: none;
-		border-radius: 4px;
-		transition: background-color 0.3s ease;
+		font-weight: bold;
 	}
 
 	.post-card .read-more:hover {
-		background-color: #e55c00;
+		text-decoration: underline;
 	}
 </style>
