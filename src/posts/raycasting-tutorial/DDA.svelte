@@ -30,8 +30,11 @@
 	function updateCanvas() {
 		if (ctx && wasmModule && typeof wasmModule.draw2d_map === 'function') {
 			wasmModule.draw2d_map(ctx);
+			if (typeof wasmModule.dda_single === 'function') {
+				wasmModule.dda_single(ctx);
+			}
 		} else {
-			console.error('Unable to call draw2d_map');
+			console.error('Unable to call draw2d_map or dda_single');
 		}
 	}
 

@@ -149,21 +149,98 @@ func move_player(this js.Value, args []js.Value) interface{} {
 }
 
 func dda_single(this js.Value, args []js.Value) interface{} {
-	mapX := int(posX)
-	mapY := int(posY)
-	var sideDistY float64 = 0.0
-	var sideDistX float64 = 0.0
+	ctx := args[0]
+	cellSize := float64(20) // Size of each cell in pixels
+
+	// Get the ray's end point using the internal DDA function
+	_, mapX, mapY := dda_single_internal()
+
+	// Calculate start and end points for the line
+	startX := posX * cellSize
+	startY := posY * cellSize
+	endX := float64(mapX) * cellSize
+	endY := float64(mapY) * cellSize
+
+	// Draw the black line
+	ctx.Call("beginPath")
+	ctx.Set("strokeStyle", "black")
+	ctx.Set("lineWidth", 2)
+	ctx.Call("moveTo", startX, startY)
+	ctx.Call("lineTo", endX, endY)
+	ctx.Call("stroke")
+
+	return nil
+}
+
+func dda_single_internal() (float64, int, int) {
+	mapX, mapY := int(posX), int(posY)
+
+	// Avoid division by zero
+	if dirX == 0 {
+		dirX = 0.00001
+	}
+	if dirY == 0 {
+		dirY = 0.00001
+	}
 
 	deltaDistX := math.Abs(1 / dirX)
 	deltaDistY := math.Abs(1 / dirY)
-	var perpWallDistX float64 = 0.0
 
-	var int stepX
-	var int stepY
+	var stepX, stepY int
+	var sideDistX, sideDistY float64
 
-	var hit = 0
-	var int side
+	if dirX < 0 {
+		stepX = -1
+		sideDistX = (posX - float64(mapX)) * deltaDistX
+	} else {
+		stepX = 1
+		sideDistX = (float64(mapX) + 1.0 - posX) * deltaDistX
+	}
+	if dirY < 0 {
+		stepY = -1
+		sideDistY = (posY - float64(mapY)) * deltaDistY
+	} else {
+		stepY = 1
+		sideDistY = (float64(mapY) + 1.0 - posY) * deltaDistY
+	}
 
+	// Main DDA loop
+	hit := false
+	side := 0
+	maxDistance := 100.0 // Maximum ray distance to prevent infinite loops
+	distance := 0.0
+
+	for !hit && distance < maxDistance {
+		if sideDistX < sideDistY {
+			sideDistX += deltaDistX
+			mapX += stepX
+			side = 0
+		} else {
+			sideDistY += deltaDistY
+			mapY += stepY
+			side = 1
+		}
+
+		// Check bounds before accessing worldMap
+		if mapX < 0 || mapX >= mapWidth || mapY < 0 || mapY >= mapHeight {
+			break
+		}
+
+		if worldMap[mapY][mapX] > 0 {
+			hit = true
+		}
+
+		distance += 0.1 // Increment distance to avoid infinite loops
+	}
+
+	// Calculate perpendicular wall distance
+	if side == 0 {
+		distance = (float64(mapX) - posX + (1-float64(stepX))/2) / dirX
+	} else {
+		distance = (float64(mapY) - posY + (1-float64(stepY))/2) / dirY
+	}
+
+	return distance, mapX, mapY
 }
 
 func dda_fov(this js.Value, args []js.Value) interface{} {
