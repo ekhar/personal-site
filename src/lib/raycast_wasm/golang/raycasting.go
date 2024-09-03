@@ -97,13 +97,61 @@ func draw2d_map(this js.Value, args []js.Value) interface{} {
 		}
 	}
 
+	// Draw grid lines
+	ctx.Set("strokeStyle", "rgba(200, 200, 200, 0.3)") // Light grey with 30% opacity
+	ctx.Set("lineWidth", 1)
+
+	// Draw vertical lines
+	for x := 0; x <= mapWidth; x++ {
+		ctx.Call("beginPath")
+		ctx.Call("moveTo", x*cellSize, 0)
+		ctx.Call("lineTo", x*cellSize, mapHeight*cellSize)
+		ctx.Call("stroke")
+	}
+
+	// Draw horizontal lines
+	for y := 0; y <= mapHeight; y++ {
+		ctx.Call("beginPath")
+		ctx.Call("moveTo", 0, y*cellSize)
+		ctx.Call("lineTo", mapWidth*cellSize, y*cellSize)
+		ctx.Call("stroke")
+	}
+
 	// Draw the player
+	playerX := posX * float64(cellSize)
+	playerY := posY * float64(cellSize)
+	playerSize := 6.0
+
+	// Draw player circle
 	ctx.Set("fillStyle", "red")
-	playerX := int(posX * float64(cellSize))
-	playerY := int(posY * float64(cellSize))
-	playerSize := 6
 	ctx.Call("beginPath")
 	ctx.Call("arc", playerX, playerY, playerSize, 0, 2*math.Pi)
+	ctx.Call("fill")
+
+	// Draw direction arrow
+	arrowLength := playerSize * 2
+	arrowEndX := playerX + dirX*arrowLength
+	arrowEndY := playerY + dirY*arrowLength
+
+	ctx.Set("strokeStyle", "yellow")
+	ctx.Set("lineWidth", 2)
+	ctx.Call("beginPath")
+	ctx.Call("moveTo", playerX, playerY)
+	ctx.Call("lineTo", arrowEndX, arrowEndY)
+	ctx.Call("stroke")
+
+	// Draw arrowhead
+	arrowheadSize := playerSize * 0.8
+	ctx.Call("beginPath")
+	ctx.Call("moveTo", arrowEndX, arrowEndY)
+	ctx.Call("lineTo",
+		arrowEndX-dirX*arrowheadSize+dirY*arrowheadSize*0.6,
+		arrowEndY-dirY*arrowheadSize-dirX*arrowheadSize*0.6)
+	ctx.Call("lineTo",
+		arrowEndX-dirX*arrowheadSize-dirY*arrowheadSize*0.6,
+		arrowEndY-dirY*arrowheadSize+dirX*arrowheadSize*0.6)
+	ctx.Call("closePath")
+	ctx.Set("fillStyle", "black")
 	ctx.Call("fill")
 
 	return nil
