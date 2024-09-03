@@ -8,40 +8,51 @@
 			date: '2017',
 			title: 'Starting Python',
 			description:
-				'I wanted to learn Python for fun (also to automate some completion based math homework.) Jose Portilla on Udemy set me up!'
+				'I wanted to learn Python for fun (also to automate some completion based math homework.) Jose Portilla on Udemy set me up!',
+			expanded: false
 		},
 		{
 			date: '2019 - 2022',
 			title: 'Computer Science Degree',
 			description:
-				'Attended University of Virginia and graduated with a B.S. in Computer Science. (Wish I took more math and physics courses)'
+				'Attended University of Virginia and graduated with a B.S. in Computer Science. (Wish I took more math and physics courses)',
+			expanded: false
 		},
 		{
 			date: 'Feb 2023 - Dec 2023',
 			title: 'Junior Software Engineer at Capital One',
 			description:
-				"Worked on internal tooling for Capital One's cloud deployment pipeline. Got certified in AWS. Learned that banks move very slowly "
+				"Worked on internal tooling for Capital One's cloud deployment pipeline. Got certified in AWS. Learned that banks move very slowly ",
+			expanded: false
 		},
 		{
 			date: 'Jan 2024 - Feb 2024',
 			title: 'Flamethrower Startup',
 			description:
-				'Learned the basics of CAD, 3D modeling, circuit design, and microcontroller code. Blew up in my face though... and decided maybe not a good first company'
+				'Learned the basics of CAD, 3D modeling, circuit design, and microcontroller code. Blew up in my face though... and decided maybe not a good first company',
+			expanded: false
 		},
-
 		{
 			date: 'March 2024 - April 2024',
 			title: 'Chess Opening Trainer',
 			description:
-				'Built custom database in postgres - it was $500/month to host because of the data. Took lichess opening database in rust, fit it to chess.com games = 25x compression. Throw in some docker containers and it is AWS free tier now'
+				'Built custom database in postgres - it was $500/month to host because of the data. Took lichess opening database in rust, fit it to chess.com games = 25x compression. Throw in some docker containers and it is AWS free tier now',
+			expanded: false
 		},
 		{
 			date: 'May 2024 - Present',
 			title: 'Solo Founder - myegift.org',
 			description:
-				'First real business project. Built a website to sell personalized egift cards. Never did frontend, set up an llc, or ran google ads before this'
+				'First real business project. Built a website to sell personalized egift cards. Never did frontend, set up an llc, or ran google ads before this',
+			expanded: false
 		}
 	];
+	let expandedItems = new Array(timelineItems.length).fill(false);
+
+	function toggleItem(index) {
+		expandedItems[index] = !expandedItems[index];
+		expandedItems = expandedItems;
+	}
 
 	onMount(() => {
 		// Add animation logic here if needed
@@ -65,8 +76,13 @@
 	{#each timelineItems as item, i}
 		<div class="timeline-item {i % 2 === 0 ? 'left' : 'right'}">
 			<div class="content">
-				<h3>{item.date} - {item.title}</h3>
-				<p>{item.description}</p>
+				<button class="header" on:click={() => toggleItem(i)}>
+					<h3>{item.date} - {item.title}</h3>
+					<span class="arrow" class:rotated={expandedItems[i]}>▼</span>
+				</button>
+				<div class="details" class:expanded={expandedItems[i]}>
+					<p>{item.description}</p>
+				</div>
 			</div>
 		</div>
 	{/each}
@@ -90,22 +106,22 @@
 <style>
 	.career-header {
 		text-align: center;
-		margin: 2rem 0; /* Add some margin to separate from other sections */
-		font-size: 1.8rem; /* Increase font size for subheading */
-		font-weight: bold; /* Make the subheading bold */
-		color: #333; /* Set a distinct color for the subheading */
-		letter-spacing: 1px; /* Add some spacing between letters */
-		position: relative; /* Position for the underline effect */
+		margin: 2rem 0;
+		font-size: 1.8rem;
+		font-weight: bold;
+		color: var(--text-color, #333); /* Use a CSS variable for text color */
+		letter-spacing: 1px;
+		position: relative;
 	}
 
 	.career-header::after {
 		content: '';
 		display: block;
-		width: 100px; /* Width of the underline */
-		height: 3px; /* Height of the underline */
-		background-color: #ff6600; /* A contrasting color for the underline */
-		margin: 0.5rem auto 0; /* Center the underline and add some space above */
-		border-radius: 5px; /* Rounded corners for the underline */
+		width: 100px;
+		height: 3px;
+		background-color: #ff6600;
+		margin: 0.5rem auto 0;
+		border-radius: 5px;
 	}
 
 	.hero {
@@ -154,22 +170,58 @@
 
 	.timeline-item .content {
 		background: #fff;
-		border: 2px solid #e0e0e0; /* Add a subtle border */
+		border: 2px solid #e0e0e0;
 		border-radius: 8px;
 		box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
 		padding: 1rem;
 		transition: transform 0.3s;
 		max-width: 300px;
-		color: #333; /* Ensure text remains readable in dark mode */
+		color: #333;
+	}
+
+	.timeline-item .header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		cursor: pointer;
+	}
+
+	.timeline-item .arrow {
+		transition: transform 0.3s;
+	}
+
+	.timeline-item .arrow.rotated {
+		transform: rotate(180deg);
+	}
+
+	.timeline-item .header {
+		display: flex;
+		justify-content: space-between;
+		align-items: center;
+		cursor: pointer;
+		background: none;
+		border: none;
+		width: 100%;
+		text-align: left;
+		padding: 0;
+		font: inherit;
+	}
+
+	.timeline-item .details {
+		max-height: 0;
+		overflow: hidden;
+		transition: max-height 0.3s ease-out;
+	}
+
+	.timeline-item .details.expanded {
+		max-height: 500px; /* Adjust this value based on your content */
+		transition: max-height 0.3s ease-in;
 	}
 
 	.timeline-item:hover .content {
 		transform: scale(1.05);
-	}
-	.timeline-item:hover .content {
-		transform: scale(1.05);
-		background-color: #ffffff; /* Light orange background on hover */
-		border-color: #ff6600; /* Orange border on hover */
+		background-color: #ffffff;
+		border-color: #ff6600;
 	}
 
 	.timeline-item h3 {
