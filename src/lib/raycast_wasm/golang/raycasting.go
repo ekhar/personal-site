@@ -9,10 +9,8 @@ import (
 )
 
 const (
-	mapWidth     = 24
-	mapHeight    = 24
-	screenWidth  = 640
-	screenHeight = 480
+	mapWidth  = 24
+	mapHeight = 24
 )
 
 var worldMap = [mapWidth][mapHeight]int{
@@ -53,20 +51,11 @@ var (
 func main() {
 	c := make(chan struct{}, 0)
 	js.Global().Set("draw2d_map", js.FuncOf(draw2d_map))
-	//TODO: This should render and draw a map with the player at the correct position. It should be 2d with black borders and he map should be a grid array with 1-5 being different colored blocks, 0 being white. It should also spawn a player being a red dot
-
 	js.Global().Set("move_player", js.FuncOf(move_player))
-	//TODO: This should be a function that takes in wasd. w = forward, a= spin left, s = spin right, d = spin right. It should move the player in the direction the user is pressing. It should also be able to move the player to a specific position. The player should be the same red dot referenced earlier.
-
 	js.Global().Set("dda_single", js.FuncOf(dda_single))
-	//TODO: This should render a single raycast using dda alorithm going in the same direction as the direction vector. Render this on the 2d map
-	js.Global().Set("dda_fov", js.FuncOf(dda_single))
-	//TODO: This should render a range of raycast using dda alorithm with the fov selected
-	//these will be the rendering algorithms. they assume draw2d_map is already rendered. it will be a live view into the rendering of what can be seen on the map
+	js.Global().Set("dda_fov", js.FuncOf(dda_fov))
 	js.Global().Set("render_dda_single", js.FuncOf(render_dda_single))
-	//TODO: This should render a single raycast on the screen
 	js.Global().Set("render_dda_fov", js.FuncOf(render_dda_fov))
-	//TODO: This should render a range of raycasts on the screen basically the full implementation of the algorithm
 
 	<-c
 }
@@ -201,6 +190,7 @@ func move_player(this js.Value, args []js.Value) interface{} {
 }
 
 func dda_single(this js.Value, args []js.Value) interface{} {
+
 	ctx := args[0]
 	scale := args[1].Float()
 	cellSize := float64(20) * scale // Size of each cell in pixels, scaled
@@ -289,7 +279,6 @@ func dda_single_internal() (float64, int, int) {
 			hit = true
 		}
 
-		distance += 0.1 // Increment distance to avoid infinite loops
 	}
 
 	// Calculate perpendicular wall distance
@@ -303,8 +292,135 @@ func dda_single_internal() (float64, int, int) {
 }
 
 func dda_fov(this js.Value, args []js.Value) interface{} {
-	// TODO: Implement FOV raycasting using DDA algorithm
+
+	ctx := args[0]
+	scale := args[1].Float()
+	cellSize := float64(20) * scale // Size of each cell in pixels, scaled
+	screenWidth := args[2].Float()
+
+	// Get the FOV results using the internal DDA function
+	fovResults := dda_fov_internal(screenWidth)
+
+	// Calculate start point for the lines
+	startX := posX * cellSize
+	startY := posY * cellSize
+
+	// Draw the FOV rays
+	for _, result := range fovResults {
+		// Calculate the exact hit point
+		endX := posX + result.rayDirX*result.dist
+		endY := posY + result.rayDirY*result.dist
+
+		// Convert to pixel coordinates
+		endX *= cellSize
+		endY *= cellSize
+
+		// Draw the line
+		ctx.Call("beginPath")
+		ctx.Set("strokeStyle", "rgba(255, 0, 0, 0.3)") // Semi-transparent red
+		ctx.Set("lineWidth", 1*scale)                  // Scale the line width
+		ctx.Call("moveTo", startX, startY)
+		ctx.Call("lineTo", endX, endY)
+		ctx.Call("stroke")
+	}
+
 	return nil
+}
+
+type FOVResult struct {
+	dist    float64
+	mapX    int
+	mapY    int
+	side    bool
+	rayDirX float64
+	rayDirY float64
+}
+
+func dda_fov_internal(screenWidth float64) []FOVResult {
+	// TODO: Implement FOV raycasting using DDA algorithm
+	ret := []FOVResult{}
+	for x := 0; x < int(screenWidth); x++ {
+
+		mapX, mapY := int(posX), int(posY)
+
+		var stepX, stepY int
+		var sideDistX, sideDistY float64
+		//cameraX calculation right side is 1 center is 0 left is -1
+		cameraX = (float64(x)/screenWidth)*2 - 1
+		rayDirX := dirX + planeX*cameraX
+		rayDirY := dirY + planeY*cameraX
+		// Avoid division by zero
+		if rayDirX == 0 {
+			rayDirX = 0.00001
+		}
+		if rayDirY == 0 {
+			rayDirY = 0.00001
+		}
+
+		deltaDistX := math.Abs(1 / rayDirX)
+		deltaDistY := math.Abs(1 / rayDirY)
+
+		if rayDirX < 0 {
+			stepX = -1
+			sideDistX = (posX - float64(mapX)) * deltaDistX
+		} else {
+			stepX = 1
+			sideDistX = (float64(mapX) + 1.0 - posX) * deltaDistX
+		}
+		if rayDirY < 0 {
+			stepY = -1
+			sideDistY = (posY - float64(mapY)) * deltaDistY
+		} else {
+			stepY = 1
+			sideDistY = (float64(mapY) + 1.0 - posY) * deltaDistY
+		}
+
+		// Main DDA loop
+		hit := false
+		side := false
+		maxDistance := 100.0 // Maximum ray distance to prevent infinite loops
+		distance := 0.0
+
+		for !hit && distance < maxDistance {
+			if sideDistX < sideDistY {
+				sideDistX += deltaDistX
+				mapX += stepX
+				side = false
+			} else {
+				sideDistY += deltaDistY
+				mapY += stepY
+				side = true
+			}
+
+			// Check bounds before accessing worldMap
+			if mapX < 0 || mapX >= mapWidth || mapY < 0 || mapY >= mapHeight {
+				break
+			}
+
+			if worldMap[mapY][mapX] > 0 {
+				hit = true
+			}
+
+		}
+
+		// Calculate perpendicular wall distance
+		// if side == 0 {
+		// 	distance = (float64(mapX) - posX + (1-float64(stepX))/2) / dirX
+		// } else {
+		// 	distance = (float64(mapY) - posY + (1-float64(stepY))/2) / dirY
+		// }
+		if !side {
+			distance = (float64(mapX) - posX + (1-float64(stepX))/2) / rayDirX
+		} else {
+			distance = (float64(mapY) - posY + (1-float64(stepY))/2) / rayDirY
+		}
+
+		data := FOVResult{distance, mapX, mapY, side, rayDirX, rayDirY}
+		ret = append(ret, data) // Corrected append operation
+	}
+
+	return ret
+
 }
 
 // Helper function to parse RGB values from a color string
@@ -380,6 +496,65 @@ func applyShade(color string, shade float64) string {
 }
 
 func render_dda_fov(this js.Value, args []js.Value) interface{} {
-	// TODO: Implement rendering of FOV raycasts on screen
+	ctx := args[0]
+	scale := args[1].Float()
+	screenWidth := float64(args[2].Int())
+	screenHeight := float64(args[3].Int())
+
+	fovResults := dda_fov_internal(screenWidth)
+
+	for x, result := range fovResults {
+		distance := result.dist
+		mapX := result.mapX
+		mapY := result.mapY
+		side := result.side
+
+		// Calculate wall height
+		wallHeight := (screenHeight / distance) * scale
+		if wallHeight > screenHeight {
+			wallHeight = screenHeight
+		}
+
+		// Calculate draw start and end positions
+		drawStart := -wallHeight/2 + screenHeight/2
+		if drawStart < 0 {
+			drawStart = 0
+		}
+		drawEnd := wallHeight/2 + screenHeight/2
+		if drawEnd >= screenHeight {
+			drawEnd = screenHeight - 1
+		}
+
+		// Determine wall color based on worldMap value
+		var color string
+		switch worldMap[mapY][mapX] {
+		case 1:
+			color = "rgb(255,0,0)" // Red
+		case 2:
+			color = "rgb(0,255,0)" // Green
+		case 3:
+			color = "rgb(0,0,255)" // Blue
+		case 4:
+			color = "rgb(255,255,0)" // Yellow
+		case 5:
+			color = "rgb(255,0,255)" // Purple
+		default:
+			color = "rgb(255,255,255)" // White
+		}
+
+		// Apply shading based on distance and side
+		shade := 1.0 / (distance * 0.1)
+		if shade > 1 {
+			shade = 1
+		}
+		if side {
+			shade *= 0.7 // Darken sides hit
+		}
+		ctx.Set("fillStyle", applyShade(color, shade))
+
+		// Draw the vertical line
+		ctx.Call("fillRect", float64(x), drawStart, 1, drawEnd-drawStart)
+	}
+
 	return nil
 }
