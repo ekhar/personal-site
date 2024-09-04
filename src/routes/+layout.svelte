@@ -31,8 +31,8 @@
 	<nav class="nav-links">
 		<a href="/blog">Blog</a>
 		<a href="/linux-config">Linux Config</a>
-		<a href="/home-server">Home Server Specs</a>
-		<a href="/projects">Projects</a>
+		<!-- <a href="/home-server">Home Server Specs</a> -->
+		<!-- <a href="/projects">Projects</a> -->
 		<button on:click={toggleDarkMode}>
 			{$darkMode ? '☀️' : '🌙'}
 		</button>
