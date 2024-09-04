@@ -133,7 +133,7 @@
 		<p>3D Render</p>
 	</div>
 	{#if !isFocused}
-		<div class="focus-prompt">Click to enable controls</div>
+		<div class="focus-prompt">Click to enable w-a-s-d controls</div>
 	{/if}
 </div>
 

@@ -102,7 +102,7 @@
 	<canvas bind:this={canvas}></canvas>
 	<p>2D Map with Player Movement</p>
 	{#if !isFocused}
-		<div class="focus-prompt">Click to enable controls</div>
+		<div class="focus-prompt">Click to enable w-a-s-d controls</div>
 	{/if}
 </div>
 

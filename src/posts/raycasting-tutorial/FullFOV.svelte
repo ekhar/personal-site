@@ -100,10 +100,10 @@
 				moveY = -1;
 				break;
 			case 'a':
-				rotate = -1;
+				rotate = 1;
 				break;
 			case 'd':
-				rotate = 1;
+				rotate = -1;
 				break;
 		}
 		if (wasmModule && wasmModule.move_player) {
@@ -131,7 +131,7 @@
 		<p>3D Render</p>
 	</div>
 	{#if !isFocused}
-		<div class="focus-prompt">Click to enable controls</div>
+		<div class="focus-prompt">Click to enable w-a-s-d controls</div>
 	{/if}
 </div>
 
