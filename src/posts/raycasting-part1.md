@@ -16,9 +16,20 @@ published: true
   import Step4 from './raycasting-tutorial/FullFOV.svelte';
 </script>
 
-## **Today I am going to try to implement my first 3D game**
+<style>
+  h2 {
+    font-size: 1.25em; /* Makes subtitles larger */
+  }
+  .center {
+    display: block;
+    margin-left: auto;
+    margin-right: auto;
+  }
+</style>
 
-## Let's start at the end and see how we got here
+## Today I am going to try to implement my first 3D game
+
+Let's start at the end and see how we got here
 
 <Step4 />
 

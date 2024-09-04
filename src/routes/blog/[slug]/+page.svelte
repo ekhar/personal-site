@@ -12,7 +12,6 @@
 <article>
 	<hgroup>
 		<h1>{data.meta.title}</h1>
-		<p>Published at {formatDate(data.meta.date)}</p>
 	</hgroup>
 
 	{#if data.interactive}
@@ -24,6 +23,8 @@
 			<svelte:component this={data.content} />
 		</div>
 	{/if}
+
+	<p>Published at {formatDate(data.meta.date)}</p>
 </article>
 
 <style>
