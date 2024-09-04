@@ -60,6 +60,159 @@ func main() {
 	<-c
 }
 
+// DDA logic
+func dda_fov_internal(screenWidth float64) []FOVResult {
+	// TODO: Implement FOV raycasting using DDA algorithm
+	ret := []FOVResult{}
+	for x := 0; x < int(screenWidth); x++ {
+
+		mapX, mapY := int(posX), int(posY)
+
+		var stepX, stepY int
+		var sideDistX, sideDistY float64
+		//cameraX calculation right side is 1 center is 0 left is -1
+		cameraX = (float64(x)/screenWidth)*2 - 1
+		rayDirX := dirX + planeX*cameraX
+		rayDirY := dirY + planeY*cameraX
+		// Avoid division by zero
+		if rayDirX == 0 {
+			rayDirX = 0.00001
+		}
+		if rayDirY == 0 {
+			rayDirY = 0.00001
+		}
+
+		deltaDistX := math.Abs(1 / rayDirX)
+		deltaDistY := math.Abs(1 / rayDirY)
+
+		if rayDirX < 0 {
+			stepX = -1
+			sideDistX = (posX - float64(mapX)) * deltaDistX
+		} else {
+			stepX = 1
+			sideDistX = (float64(mapX) + 1.0 - posX) * deltaDistX
+		}
+		if rayDirY < 0 {
+			stepY = -1
+			sideDistY = (posY - float64(mapY)) * deltaDistY
+		} else {
+			stepY = 1
+			sideDistY = (float64(mapY) + 1.0 - posY) * deltaDistY
+		}
+
+		// Main DDA loop
+		hit := false
+		side := false
+		maxDistance := 100.0 // Maximum ray distance to prevent infinite loops
+		distance := 0.0
+
+		for !hit && distance < maxDistance {
+			if sideDistX < sideDistY {
+				sideDistX += deltaDistX
+				mapX += stepX
+				side = false
+			} else {
+				sideDistY += deltaDistY
+				mapY += stepY
+				side = true
+			}
+
+			// Check bounds before accessing worldMap
+			if mapX < 0 || mapX >= mapWidth || mapY < 0 || mapY >= mapHeight {
+				break
+			}
+
+			if worldMap[mapY][mapX] > 0 {
+				hit = true
+			}
+
+		}
+
+		if !side {
+			distance = (float64(mapX) - posX + (1-float64(stepX))/2) / rayDirX
+		} else {
+			distance = (float64(mapY) - posY + (1-float64(stepY))/2) / rayDirY
+		}
+
+		data := FOVResult{distance, mapX, mapY, side, rayDirX, rayDirY}
+		ret = append(ret, data) // Corrected append operation
+	}
+
+	return ret
+
+}
+
+func dda_single_internal() (float64, int, int) {
+	mapX, mapY := int(posX), int(posY)
+
+	// Avoid division by zero
+	if dirX == 0 {
+		dirX = 0.00001
+	}
+	if dirY == 0 {
+		dirY = 0.00001
+	}
+
+	deltaDistX := math.Abs(1 / dirX)
+	deltaDistY := math.Abs(1 / dirY)
+
+	var stepX, stepY int
+	var sideDistX, sideDistY float64
+
+	if dirX < 0 {
+		stepX = -1
+		sideDistX = (posX - float64(mapX)) * deltaDistX
+	} else {
+		stepX = 1
+		sideDistX = (float64(mapX) + 1.0 - posX) * deltaDistX
+	}
+	if dirY < 0 {
+		stepY = -1
+		sideDistY = (posY - float64(mapY)) * deltaDistY
+	} else {
+		stepY = 1
+		sideDistY = (float64(mapY) + 1.0 - posY) * deltaDistY
+	}
+
+	// Main DDA loop
+	hit := false
+	side := 0
+	maxDistance := 100.0 // Maximum ray distance to prevent infinite loops
+	distance := 0.0
+
+	for !hit && distance < maxDistance {
+		if sideDistX < sideDistY {
+			sideDistX += deltaDistX
+			mapX += stepX
+			side = 0
+		} else {
+			sideDistY += deltaDistY
+			mapY += stepY
+			side = 1
+		}
+
+		// Check bounds before accessing worldMap
+		if mapX < 0 || mapX >= mapWidth || mapY < 0 || mapY >= mapHeight {
+			break
+		}
+
+		if worldMap[mapY][mapX] > 0 {
+			hit = true
+		}
+
+	}
+
+	// Calculate perpendicular wall distance
+	if side == 0 {
+		distance = (float64(mapX) - posX + (1-float64(stepX))/2) / dirX
+	} else {
+		distance = (float64(mapY) - posY + (1-float64(stepY))/2) / dirY
+	}
+
+	return distance, mapX, mapY
+}
+
+// Renderers
 func draw2d_map(this js.Value, args []js.Value) interface{} {
 	ctx := args[0]
 	scale := args[1].Float()
@@ -220,77 +373,6 @@ func dda_single(this js.Value, args []js.Value) interface{} {
 
 	return nil
 }
-
-func dda_single_internal() (float64, int, int) {
-	mapX, mapY := int(posX), int(posY)
-
-	// Avoid division by zero
-	if dirX == 0 {
-		dirX = 0.00001
-	}
-	if dirY == 0 {
-		dirY = 0.00001
-	}
-
-	deltaDistX := math.Abs(1 / dirX)
-	deltaDistY := math.Abs(1 / dirY)
-
-	var stepX, stepY int
-	var sideDistX, sideDistY float64
-
-	if dirX < 0 {
-		stepX = -1
-		sideDistX = (posX - float64(mapX)) * deltaDistX
-	} else {
-		stepX = 1
-		sideDistX = (float64(mapX) + 1.0 - posX) * deltaDistX
-	}
-	if dirY < 0 {
-		stepY = -1
-		sideDistY = (posY - float64(mapY)) * deltaDistY
-	} else {
-		stepY = 1
-		sideDistY = (float64(mapY) + 1.0 - posY) * deltaDistY
-	}
-
-	// Main DDA loop
-	hit := false
-	side := 0
-	maxDistance := 100.0 // Maximum ray distance to prevent infinite loops
-	distance := 0.0
-
-	for !hit && distance < maxDistance {
-		if sideDistX < sideDistY {
-			sideDistX += deltaDistX
-			mapX += stepX
-			side = 0
-		} else {
-			sideDistY += deltaDistY
-			mapY += stepY
-			side = 1
-		}
-
-		// Check bounds before accessing worldMap
-		if mapX < 0 || mapX >= mapWidth || mapY < 0 || mapY >= mapHeight {
-			break
-		}
-
-		if worldMap[mapY][mapX] > 0 {
-			hit = true
-		}
-
-	}
-
-	// Calculate perpendicular wall distance
-	if side == 0 {
-		distance = (float64(mapX) - posX + (1-float64(stepX))/2) / dirX
-	} else {
-		distance = (float64(mapY) - posY + (1-float64(stepY))/2) / dirY
-	}
-
-	return distance, mapX, mapY
-}
-
 func dda_fov(this js.Value, args []js.Value) interface{} {
 
 	ctx := args[0]
@@ -326,114 +408,6 @@ func dda_fov(this js.Value, args []js.Value) interface{} {
 
 	return nil
 }
-
-type FOVResult struct {
-	dist    float64
-	mapX    int
-	mapY    int
-	side    bool
-	rayDirX float64
-	rayDirY float64
-}
-
-func dda_fov_internal(screenWidth float64) []FOVResult {
-	// TODO: Implement FOV raycasting using DDA algorithm
-	ret := []FOVResult{}
-	for x := 0; x < int(screenWidth); x++ {
-
-		mapX, mapY := int(posX), int(posY)
-
-		var stepX, stepY int
-		var sideDistX, sideDistY float64
-		//cameraX calculation right side is 1 center is 0 left is -1
-		cameraX = (float64(x)/screenWidth)*2 - 1
-		rayDirX := dirX + planeX*cameraX
-		rayDirY := dirY + planeY*cameraX
-		// Avoid division by zero
-		if rayDirX == 0 {
-			rayDirX = 0.00001
-		}
-		if rayDirY == 0 {
-			rayDirY = 0.00001
-		}
-
-		deltaDistX := math.Abs(1 / rayDirX)
-		deltaDistY := math.Abs(1 / rayDirY)
-
-		if rayDirX < 0 {
-			stepX = -1
-			sideDistX = (posX - float64(mapX)) * deltaDistX
-		} else {
-			stepX = 1
-			sideDistX = (float64(mapX) + 1.0 - posX) * deltaDistX
-		}
-		if rayDirY < 0 {
-			stepY = -1
-			sideDistY = (posY - float64(mapY)) * deltaDistY
-		} else {
-			stepY = 1
-			sideDistY = (float64(mapY) + 1.0 - posY) * deltaDistY
-		}
-
-		// Main DDA loop
-		hit := false
-		side := false
-		maxDistance := 100.0 // Maximum ray distance to prevent infinite loops
-		distance := 0.0
-
-		for !hit && distance < maxDistance {
-			if sideDistX < sideDistY {
-				sideDistX += deltaDistX
-				mapX += stepX
-				side = false
-			} else {
-				sideDistY += deltaDistY
-				mapY += stepY
-				side = true
-			}
-
-			// Check bounds before accessing worldMap
-			if mapX < 0 || mapX >= mapWidth || mapY < 0 || mapY >= mapHeight {
-				break
-			}
-
-			if worldMap[mapY][mapX] > 0 {
-				hit = true
-			}
-
-		}
-
-		// Calculate perpendicular wall distance
-		// if side == 0 {
-		// 	distance = (float64(mapX) - posX + (1-float64(stepX))/2) / dirX
-		// } else {
-		// 	distance = (float64(mapY) - posY + (1-float64(stepY))/2) / dirY
-		// }
-		if !side {
-			distance = (float64(mapX) - posX + (1-float64(stepX))/2) / rayDirX
-		} else {
-			distance = (float64(mapY) - posY + (1-float64(stepY))/2) / rayDirY
-		}
-
-		data := FOVResult{distance, mapX, mapY, side, rayDirX, rayDirY}
-		ret = append(ret, data) // Corrected append operation
-	}
-
-	return ret
-
-}
-
-// Helper function to parse RGB values from a color string
-func parseRGB(color string) (int, int, int) {
-	color = strings.TrimPrefix(color, "rgb(")
-	color = strings.TrimSuffix(color, ")")
-	parts := strings.Split(color, ",")
-	r, _ := strconv.Atoi(strings.TrimSpace(parts[0]))
-	g, _ := strconv.Atoi(strings.TrimSpace(parts[1]))
-	b, _ := strconv.Atoi(strings.TrimSpace(parts[2]))
-	return r, g, b
-}
-
 func render_dda_single(this js.Value, args []js.Value) interface{} {
 	ctx := args[0]
 	scale := args[1].Float()
@@ -484,15 +458,6 @@ func render_dda_single(this js.Value, args []js.Value) interface{} {
 	ctx.Call("fillRect", screenWidth/2, drawStart, 1, drawEnd-drawStart)
 
 	return nil
-}
-
-// Helper function to apply shading to a color
-func applyShade(color string, shade float64) string {
-	r, g, b := parseRGB(color)
-	r = int(float64(r) * shade)
-	g = int(float64(g) * shade)
-	b = int(float64(b) * shade)
-	return fmt.Sprintf("rgb(%d,%d,%d)", r, g, b)
 }
 
 func render_dda_fov(this js.Value, args []js.Value) interface{} {
@@ -555,4 +520,32 @@ func render_dda_fov(this js.Value, args []js.Value) interface{} {
 	}
 
 	return nil
+}
+
+// Helpers
+type FOVResult struct {
+	dist    float64
+	mapX    int
+	mapY    int
+	side    bool
+	rayDirX float64
+	rayDirY float64
+}
+
+func parseRGB(color string) (int, int, int) {
+	color = strings.TrimPrefix(color, "rgb(")
+	color = strings.TrimSuffix(color, ")")
+	parts := strings.Split(color, ",")
+	r, _ := strconv.Atoi(strings.TrimSpace(parts[0]))
+	g, _ := strconv.Atoi(strings.TrimSpace(parts[1]))
+	b, _ := strconv.Atoi(strings.TrimSpace(parts[2]))
+	return r, g, b
+}
+
+func applyShade(color string, shade float64) string {
+	r, g, b := parseRGB(color)
+	r = int(float64(r) * shade)
+	g = int(float64(g) * shade)
+	b = int(float64(b) * shade)
+	return fmt.Sprintf("rgb(%d,%d,%d)", r, g, b)
 }
