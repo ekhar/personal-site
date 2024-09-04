@@ -70,10 +70,11 @@ func main() {
 
 func draw2d_map(this js.Value, args []js.Value) interface{} {
 	ctx := args[0]
-	cellSize := 20 // Size of each cell in pixels
+	scale := args[1].Float()
+	cellSize := 20 * scale // Size of each cell in pixels, scaled
 
 	// Clear the canvas
-	ctx.Call("clearRect", 0, 0, mapWidth*cellSize, mapHeight*cellSize)
+	ctx.Call("clearRect", 0, 0, float64(mapWidth)*cellSize, float64(mapHeight)*cellSize)
 
 	// Draw the map
 	for y := 0; y < mapHeight; y++ {
@@ -93,34 +94,34 @@ func draw2d_map(this js.Value, args []js.Value) interface{} {
 			default:
 				ctx.Set("fillStyle", "white")
 			}
-			ctx.Call("fillRect", x*cellSize, y*cellSize, cellSize, cellSize)
+			ctx.Call("fillRect", float64(x)*cellSize, float64(y)*cellSize, cellSize, cellSize)
 		}
 	}
 
 	// Draw grid lines
 	ctx.Set("strokeStyle", "rgba(200, 200, 200, 0.3)") // Light grey with 30% opacity
-	ctx.Set("lineWidth", 1)
+	ctx.Set("lineWidth", scale)
 
 	// Draw vertical lines
 	for x := 0; x <= mapWidth; x++ {
 		ctx.Call("beginPath")
-		ctx.Call("moveTo", x*cellSize, 0)
-		ctx.Call("lineTo", x*cellSize, mapHeight*cellSize)
+		ctx.Call("moveTo", float64(x)*cellSize, 0)
+		ctx.Call("lineTo", float64(x)*cellSize, float64(mapHeight)*cellSize)
 		ctx.Call("stroke")
 	}
 
 	// Draw horizontal lines
 	for y := 0; y <= mapHeight; y++ {
 		ctx.Call("beginPath")
-		ctx.Call("moveTo", 0, y*cellSize)
-		ctx.Call("lineTo", mapWidth*cellSize, y*cellSize)
+		ctx.Call("moveTo", 0, float64(y)*cellSize)
+		ctx.Call("lineTo", float64(mapWidth)*cellSize, float64(y)*cellSize)
 		ctx.Call("stroke")
 	}
 
 	// Draw the player
-	playerX := posX * float64(cellSize)
-	playerY := posY * float64(cellSize)
-	playerSize := 6.0
+	playerX := posX * cellSize
+	playerY := posY * cellSize
+	playerSize := 6.0 * scale
 
 	// Draw player circle
 	ctx.Set("fillStyle", "red")
@@ -134,7 +135,7 @@ func draw2d_map(this js.Value, args []js.Value) interface{} {
 	arrowEndY := playerY + dirY*arrowLength
 
 	ctx.Set("strokeStyle", "yellow")
-	ctx.Set("lineWidth", 2)
+	ctx.Set("lineWidth", 2*scale)
 	ctx.Call("beginPath")
 	ctx.Call("moveTo", playerX, playerY)
 	ctx.Call("lineTo", arrowEndX, arrowEndY)
@@ -198,7 +199,8 @@ func move_player(this js.Value, args []js.Value) interface{} {
 
 func dda_single(this js.Value, args []js.Value) interface{} {
 	ctx := args[0]
-	cellSize := float64(20) // Size of each cell in pixels
+	scale := args[1].Float()
+	cellSize := float64(20) * scale // Size of each cell in pixels, scaled
 
 	// Get the ray's end point using the internal DDA function
 	distance, _, _ := dda_single_internal()
@@ -218,7 +220,7 @@ func dda_single(this js.Value, args []js.Value) interface{} {
 	// Draw the black line
 	ctx.Call("beginPath")
 	ctx.Set("strokeStyle", "black")
-	ctx.Set("lineWidth", 2)
+	ctx.Set("lineWidth", 2*scale) // Scale the line width
 	ctx.Call("moveTo", startX, startY)
 	ctx.Call("lineTo", endX, endY)
 	ctx.Call("stroke")

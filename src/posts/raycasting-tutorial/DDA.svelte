@@ -7,20 +7,49 @@
 	let ctx: CanvasRenderingContext2D;
 	let isFocused = false;
 
+	let scale = 1;
+
+	// Adjust this value to change the size of the map (e.g., 0.5 for half size)
+	const SIZE_MULTIPLIER = 0.5;
+
 	onMount(async () => {
 		try {
 			wasmModule = await initWasm();
 			ctx = canvas.getContext('2d')!;
-			canvas.width = 24 * 20; // mapWidth * cellSize
-			canvas.height = 24 * 20; // mapHeight * cellSize
+			function resizeCanvas() {
+				const mapWidth = 24;
+				const mapHeight = 24;
+				const aspectRatio = mapWidth / mapHeight;
+
+				// Calculate base size
+				let baseWidth = window.innerWidth * SIZE_MULTIPLIER;
+				let baseHeight = window.innerHeight * SIZE_MULTIPLIER;
+
+				if (baseWidth / baseHeight > aspectRatio) {
+					canvas.height = baseHeight;
+					canvas.width = canvas.height * aspectRatio;
+				} else {
+					canvas.width = baseWidth;
+					canvas.height = canvas.width / aspectRatio;
+				}
+
+				scale = canvas.width / (mapWidth * 20); // 20 is the original cellSize
+				updateCanvas();
+			}
+
+			resizeCanvas();
+			window.addEventListener('resize', resizeCanvas);
+			window.addEventListener('keydown', handleKeyDown);
+
 			if (typeof wasmModule.draw2d_map === 'function') {
 				updateCanvas();
 			} else {
 				console.error('draw2d_map is not a function');
 			}
-			window.addEventListener('keydown', handleKeyDown);
+
 			return () => {
 				window.removeEventListener('keydown', handleKeyDown);
+				window.removeEventListener('resize', resizeCanvas);
 			};
 		} catch (error) {
 			console.error('Failed to load WebAssembly module:', error);
@@ -29,9 +58,9 @@
 
 	function updateCanvas() {
 		if (ctx && wasmModule && typeof wasmModule.draw2d_map === 'function') {
-			wasmModule.draw2d_map(ctx);
+			wasmModule.draw2d_map(ctx, scale);
 			if (typeof wasmModule.dda_single === 'function') {
-				wasmModule.dda_single(ctx);
+				wasmModule.dda_single(ctx, scale);
 			}
 		} else {
 			console.error('Unable to call draw2d_map or dda_single');
@@ -86,9 +115,10 @@
 <style>
 	.canvas-container {
 		text-align: center;
-		margin-top: 20px;
 		position: relative;
 		outline: none;
+		display: inline-block;
+		margin: 20px auto;
 	}
 	canvas {
 		border: 1px solid #ccc;
@@ -102,5 +132,8 @@
 		color: white;
 		padding: 10px;
 		border-radius: 5px;
+	}
+	p {
+		margin: 10px 0 0;
 	}
 </style>
