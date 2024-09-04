@@ -529,15 +529,13 @@ func render_dda_fov(this js.Value, args []js.Value) interface{} {
 		var color string
 		switch worldMap[mapY][mapX] {
 		case 1:
-			color = "rgb(255,0,0)" // Red
+			color = "rgb(0,0,0)" // Black
 		case 2:
-			color = "rgb(0,255,0)" // Green
-		case 3:
 			color = "rgb(0,0,255)" // Blue
+		case 3:
+			color = "rgb(0,255,0)" // Green
 		case 4:
 			color = "rgb(255,255,0)" // Yellow
-		case 5:
-			color = "rgb(255,0,255)" // Purple
 		default:
 			color = "rgb(255,255,255)" // White
 		}
