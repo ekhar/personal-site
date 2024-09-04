@@ -124,11 +124,9 @@
 <div class="canvas-container" on:click={handleFocus} on:blur={handleBlur} tabindex="0">
 	<div class="map-container">
 		<canvas bind:this={mapCanvas}></canvas>
-		<p>2D Map</p>
 	</div>
 	<div class="render-container">
 		<canvas bind:this={renderCanvas}></canvas>
-		<p>3D Render</p>
 	</div>
 	{#if !isFocused}
 		<div class="focus-prompt">Click to enable w-a-s-d controls</div>

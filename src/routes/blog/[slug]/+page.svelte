@@ -15,12 +15,6 @@
 		<p>Published at {formatDate(data.meta.date)}</p>
 	</hgroup>
 
-	<div class="tags">
-		{#each data.meta.categories as category}
-			<span class="surface-4">&num;{category}</span>
-		{/each}
-	</div>
-
 	{#if data.interactive}
 		<div class="interactive-post">
 			<svelte:component this={data.content} />
@@ -43,15 +37,6 @@
 	h1 + p {
 		margin-top: var(--size-2);
 		color: var(--text-2);
-	}
-	.tags {
-		display: flex;
-		gap: var(--size-3);
-		margin-top: var(--size-7);
-	}
-	.tags > * {
-		padding: var(--size-2) var(--size-3);
-		border-radius: var(--radius-round);
 	}
 	.interactive-post {
 		margin-top: var(--size-7);
