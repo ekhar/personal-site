@@ -1,7 +1,10 @@
 package main
 
 import (
+	"fmt"
 	"math"
+	"strconv"
+	"strings"
 	"syscall/js"
 )
 
@@ -304,9 +307,76 @@ func dda_fov(this js.Value, args []js.Value) interface{} {
 	return nil
 }
 
+// Helper function to parse RGB values from a color string
+func parseRGB(color string) (int, int, int) {
+	color = strings.TrimPrefix(color, "rgb(")
+	color = strings.TrimSuffix(color, ")")
+	parts := strings.Split(color, ",")
+	r, _ := strconv.Atoi(strings.TrimSpace(parts[0]))
+	g, _ := strconv.Atoi(strings.TrimSpace(parts[1]))
+	b, _ := strconv.Atoi(strings.TrimSpace(parts[2]))
+	return r, g, b
+}
+
 func render_dda_single(this js.Value, args []js.Value) interface{} {
-	// TODO: Implement rendering of single raycast on screen
+	ctx := args[0]
+	scale := args[1].Float()
+	screenWidth := float64(args[2].Int())
+	screenHeight := float64(args[3].Int())
+
+	distance, mapX, mapY := dda_single_internal()
+
+	// Calculate wall height
+	wallHeight := (screenHeight / distance) * scale
+	if wallHeight > screenHeight {
+		wallHeight = screenHeight
+	}
+
+	// Calculate draw start and end positions
+	drawStart := -wallHeight/2 + screenHeight/2
+	if drawStart < 0 {
+		drawStart = 0
+	}
+	drawEnd := wallHeight/2 + screenHeight/2
+	if drawEnd >= screenHeight {
+		drawEnd = screenHeight - 1
+	}
+
+	// Determine wall color based on worldMap value
+	var color string
+	switch worldMap[mapY][mapX] {
+	case 1:
+		color = "rgb(0,0,0)" // Black
+	case 2:
+		color = "rgb(0,0,255)" // Blue
+	case 3:
+		color = "rgb(0,255,0)" // Green
+	case 4:
+		color = "rgb(255,255,0)" // Yellow
+	default:
+		color = "rgb(255,255,255)" // White
+	}
+
+	// Apply shading based on distance
+	shade := 1.0 / (distance * 0.1)
+	if shade > 1 {
+		shade = 1
+	}
+	ctx.Set("fillStyle", applyShade(color, shade))
+
+	// Draw the vertical line
+	ctx.Call("fillRect", screenWidth/2, drawStart, 1, drawEnd-drawStart)
+
 	return nil
+}
+
+// Helper function to apply shading to a color
+func applyShade(color string, shade float64) string {
+	r, g, b := parseRGB(color)
+	r = int(float64(r) * shade)
+	g = int(float64(g) * shade)
+	b = int(float64(b) * shade)
+	return fmt.Sprintf("rgb(%d,%d,%d)", r, g, b)
 }
 
 func render_dda_fov(this js.Value, args []js.Value) interface{} {

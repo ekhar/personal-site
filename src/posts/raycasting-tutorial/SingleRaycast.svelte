@@ -64,17 +64,30 @@
 	});
 
 	function updateCanvases() {
-		if (mapCtx && wasmModule && typeof wasmModule.draw2d_map === 'function') {
-			wasmModule.draw2d_map(mapCtx, scale);
+		if (mapCtx && renderCtx && wasmModule) {
+			// Clear both canvases
+			mapCtx.clearRect(0, 0, mapCanvas.width, mapCanvas.height);
+			renderCtx.clearRect(0, 0, renderCanvas.width, renderCanvas.height);
+
+			// Draw 2D map
+			if (typeof wasmModule.draw2d_map === 'function') {
+				wasmModule.draw2d_map(mapCtx, scale);
+			}
+
+			// Draw single ray on 2D map
 			if (typeof wasmModule.dda_single === 'function') {
 				wasmModule.dda_single(mapCtx, scale);
 			}
-		} else {
-			console.error('Unable to call draw2d_map or dda_single');
-		}
 
-		// TODO: Implement rendering on renderCanvas
-		// This is where you'll add your raycast rendering code
+			// Render single ray on 3D canvas
+			if (typeof wasmModule.render_dda_single === 'function') {
+				wasmModule.render_dda_single(renderCtx, scale, renderCanvas.width, renderCanvas.height);
+			} else {
+				console.error('render_dda_single is not a function');
+			}
+		} else {
+			console.error('Unable to update canvases');
+		}
 	}
 
 	function handleKeyDown(event: KeyboardEvent) {
