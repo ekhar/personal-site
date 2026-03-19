@@ -1,7 +1,7 @@
 const ORIGIN = 'https://erickhar-dashboard.vercel.app';
 
 export default {
-	async fetch(request: Request): Promise<Response> {
+	async fetch(request) {
 		const url = new URL(request.url);
 		const origin = new URL(ORIGIN);
 		url.hostname = origin.hostname;
