@@ -1,0 +1,5 @@
+{
+  "extends": "@erickhar/typescript-config/react-library.json",
+  "include": ["components/**/*.ts", "components/**/*.tsx", "hooks/**/*.ts"],
+  "exclude": ["node_modules"]
+}

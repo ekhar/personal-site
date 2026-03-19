@@ -1,0 +1,6 @@
+@import "tailwindcss";
+@import "@erickhar/ui/globals.css";
+
+@source "../../../../packages/ui/src";
+
+@custom-variant dark (&:is(.dark *));

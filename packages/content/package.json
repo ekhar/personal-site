@@ -1,0 +1,21 @@
+{
+  "name": "@erickhar/content",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    "./posts/*": "./posts/*.mdx",
+    "./components/*": "./components/*/index.tsx",
+    "./wasm/*": "./assets/wasm/*",
+    "./hooks/*": "./hooks/*.ts"
+  },
+  "devDependencies": {
+    "@erickhar/typescript-config": "workspace:*",
+    "@types/react": "^19.2.14",
+    "react": "^19.2.4",
+    "typescript": "^5.9.3"
+  },
+  "peerDependencies": {
+    "react": "^19.0.0"
+  }
+}

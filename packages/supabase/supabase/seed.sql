@@ -1,0 +1,2 @@
+-- Seed data is applied after migrations when running `supabase db reset`.
+-- Add test data here once a user exists.

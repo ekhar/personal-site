@@ -1,44 +1,21 @@
 {
-	"name": "personal-site",
-	"version": "0.0.1",
-	"scripts": {
-		"dev": "vite dev",
-		"build": "vite build",
-		"preview": "vite preview",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
-		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"lint": "prettier --check . && eslint .",
-		"format": "prettier --write ."
-	},
-	"devDependencies": {
-		"@fontsource/fira-mono": "^5.0.0",
-		"@neoconfetti/svelte": "^2.0.0",
-		"@sveltejs/adapter-auto": "^3.0.0",
-		"@sveltejs/kit": "^2.0.0",
-		"@sveltejs/vite-plugin-svelte": "^3.0.0",
-		"@types/eslint": "^9.6.0",
-		"autoprefixer": "^10.4.20",
-		"eslint": "^9.0.0",
-		"eslint-config-prettier": "^9.1.0",
-		"eslint-plugin-svelte": "^2.36.0",
-		"globals": "^15.0.0",
-		"mdsvex": "^0.12.3",
-		"postcss": "^8.4.42",
-		"prettier": "^3.1.1",
-		"prettier-plugin-svelte": "^3.1.2",
-		"svelte": "^4.2.7",
-		"svelte-check": "^3.6.0",
-		"tailwindcss": "^3.4.10",
-		"typescript": "^5.0.0",
-		"typescript-eslint": "^8.0.0",
-		"typescript-svelte-plugin": "^0.3.40",
-		"vite": "^5.0.3"
-	},
-	"type": "module",
-	"dependencies": {
-		"@fontsource/jetbrains-mono": "^5.0.21",
-		"@fontsource/manrope": "^5.0.21",
-		"lucide-svelte": "^0.437.0",
-		"open-props": "^1.7.6"
-	}
+  "name": "erickhar",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:blog": "bun run --filter @erickhar/blog dev",
+    "dev:dashboard": "bun run --filter @erickhar/dashboard dev",
+    "build:blog": "bun run --filter @erickhar/blog build",
+    "build:dashboard": "bun run --filter @erickhar/dashboard build",
+    "lint": "biome check .",
+    "lint:fix": "biome check --write .",
+    "format": "biome format --write ."
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.2.2",
+    "tailwindcss": "^4.2.2"
+  }
 }
