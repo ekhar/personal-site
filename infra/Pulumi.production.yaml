@@ -1,0 +1,20 @@
+config:
+  erickhar:AllowedEmail:
+    secure: AAABADVbqxvONYA9mMnlHufxj2Cvn3RaL84GvGn6u7Ieir8wggrW5my4ix3/y079VqSxRhig5Gs=
+  erickhar:SupabaseUrl:
+    secure: AAABAJ7DIW0vzYwi4CGsRB9ouhOOmnOActaPj/JbMqvLFmqPmwzctFugv4g5E6J3dRSzMyoVLsnICYImw5atT1eH8LqGCbqa
+  erickhar:SupabasePublishableKey:
+    secure: AAABAPNe5xs9Da3lIQQ2SjAuZ9Yv0D04qWZwxcAv3jjSnO3AYkAfOoKufOiDSaeBcLgq2wVJCT8NqHrGOwKevdMByDkCFIyitU/oIGFE
+  erickhar:CloudflareAccountId:
+    secure: AAABAMMF4WgkLq1hJsqqjI9pbjF+czfOHmE6eePj3xAAoFc8TDtUht0UmKuEVeV2Mw1DmSrBKALWhPsMBpd1tw==
+  erickhar:CloudflareZoneId:
+    secure: AAABAFCiaSs0Kk38Hf509Y/dzjPf1yKcsX+VGB3qgMyAFAG5IydwhhQU6ZYb2cX6IWEg7vLRoIRekbGzqBTm0w==
+  erickhar:VercelTeamId:
+    secure: AAABAFEjQyj+YbtaHwIk8ADf2G2sCtEc8UAuAl2aqLWCkcxZlG0Qz+hxPtsoPCecyPOstQQ2RbPDNiwOow==
+  erickhar:VercelApiToken:
+    secure: AAABAKFDN17C9HPaZuSMG5khhdPbPXpWBb+dmAHBGGtxSoaLtVVVoax5kkI8+mtYHnlm1BxkdidNQLpQR/pCYWxz4YqDqpsrYlpfuNi+GslmHTCK/2MOWVAfDZ4=
+  cloudflare:apiToken:
+    secure: AAABAHq/jVY2TozWaL9sW2vnzj3Di53Sb38be74AzwwnA6GzFUGG3tvy2wKVPLYKjKQ5GBMFYbB0kjdaRTbEFrXvfx9+O30npZVSR5UlsTz971xuVw==
+  vercel:apiToken:
+    secure: AAABAEf/NndZQcWh2gT/gCNNx1Grfgqf+c8uN4XSb0IIYbvUSzu6hNpANFrWNCZVg0S5a3zZYcH4zswrqqfv4OJVtp7YVGNDkINxNkYgYs9NY6Yb8Jf9JL1XFpI=
+  vercel:team: team_FUCIhyhKVW6WjBOBHtMQdGpd

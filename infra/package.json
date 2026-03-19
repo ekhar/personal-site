@@ -1,0 +1,19 @@
+{
+  "name": "erickhar-infra",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "preview": "pulumi preview",
+    "up": "pulumi up",
+    "destroy": "pulumi destroy"
+  },
+  "dependencies": {
+    "@pulumi/cloudflare": "^6.13.0",
+    "@pulumi/pulumi": "^3.224.0",
+    "@pulumiverse/vercel": "^4.6.1"
+  },
+  "devDependencies": {
+    "@types/node": "^22.0.0",
+    "typescript": "^5.9.3"
+  }
+}
