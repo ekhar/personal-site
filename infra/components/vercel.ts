@@ -1,6 +1,6 @@
 import * as vercel from '@pulumiverse/vercel';
 import { secrets } from '../config/secrets.ts';
-import { blogDomain, dashboardDomain } from '../config/stage.ts';
+import { blogDomain } from '../config/stage.ts';
 
 // Blog project on Vercel (static export)
 export const blogProject = new vercel.Project('blog', {
@@ -13,6 +13,13 @@ export const blogProject = new vercel.Project('blog', {
 	rootDirectory: 'apps/blog',
 	buildCommand: 'cd ../.. && bun run build:blog',
 	installCommand: 'bun install',
+	environments: [
+		{
+			key: 'BUN_VERSION',
+			value: '1.3.10',
+			targets: ['production', 'preview'],
+		},
+	],
 });
 
 export const blogApexDomain = new vercel.ProjectDomain('blog-apex', {
@@ -39,6 +46,11 @@ export const dashboardProject = new vercel.Project('dashboard', {
 	installCommand: 'bun install',
 	environments: [
 		{
+			key: 'BUN_VERSION',
+			value: '1.3.10',
+			targets: ['production', 'preview'],
+		},
+		{
 			key: 'NEXT_PUBLIC_SUPABASE_URL',
 			value: secrets.SupabaseUrl,
 			targets: ['production', 'preview'],
@@ -49,11 +61,6 @@ export const dashboardProject = new vercel.Project('dashboard', {
 			targets: ['production', 'preview'],
 		},
 	],
-});
-
-export const dashboardDomainVercel = new vercel.ProjectDomain('dashboard-domain', {
-	projectId: dashboardProject.id,
-	domain: dashboardDomain,
 });
 
 export const vercelProjects = {
